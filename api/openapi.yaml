@@ -1,0 +1,850 @@
+openapi: 3.0.0
+info:
+  title: Consultas API
+  description: API para gestionar consultas de usuarios.
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/FFSJ/APP-Plenos/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: ºconsultas
+  description: Llamadas que tenga que ver con las consultas
+- name: respuestasUsuarios
+  description: Llamadas que tenga que ver con las respuestas usuarios
+- name: preguntas
+  description: Llamadas que tenga que ver con las preguntas
+- name: opcionesRespuestas
+  description: Llamadas que tenga que ver con las opcionesRespuestas
+paths:
+  /consultas:
+    get:
+      tags:
+      - consultas
+      summary: Obtener todas las consultas
+      operationId: consultasGET
+      responses:
+        "200":
+          description: Lista de consultas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseConsultas'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Consultas
+    post:
+      tags:
+      - consultas
+      summary: Crear una nueva consulta
+      operationId: consultasPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Consulta'
+        required: true
+      responses:
+        "201":
+          description: Consulta creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Consultas
+  /consultas/{id}:
+    get:
+      tags:
+      - consultas
+      summary: Obtener una consulta por ID
+      operationId: consultasIdGET
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Consulta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseConsulta'
+        "404":
+          description: Consulta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Consultas
+    put:
+      tags:
+      - consultas
+      summary: Actualizar una consulta por ID
+      operationId: consultasIdPUT
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Consulta'
+        required: true
+      responses:
+        "200":
+          description: Consulta actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Consulta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Consultas
+    delete:
+      tags:
+      - consultas
+      summary: Eliminar una consulta por ID
+      operationId: consultasIdDELETE
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Consulta eliminada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Consulta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Consultas
+  /respuestasUsuarios:
+    post:
+      tags:
+      - respuestasUsuarios
+      summary: Guardar una respuesta de usuario
+      operationId: respuestasUsuariosPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RespuestaUsuario'
+        required: true
+      responses:
+        "201":
+          description: Respuesta guardada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: RespuestasUsuarios
+  /respuestasUsuarios/{id}:
+    get:
+      tags:
+      - respuestasUsuarios
+      summary: Obtener una respuesta de usuario por ID
+      operationId: respuestasUsuariosIdGET
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Respuesta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseRespuestaUsuario'
+        "404":
+          description: Respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: RespuestasUsuarios
+    put:
+      tags:
+      - respuestasUsuarios
+      summary: Actualizar una respuesta de usuario por ID
+      operationId: respuestasUsuariosIdPUT
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RespuestaUsuario'
+        required: true
+      responses:
+        "200":
+          description: Respuesta actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: RespuestasUsuarios
+    delete:
+      tags:
+      - respuestasUsuarios
+      summary: Eliminar una respuesta de usuario por ID
+      operationId: respuestasUsuariosIdDELETE
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Respuesta eliminada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: RespuestasUsuarios
+  /preguntas:
+    get:
+      tags:
+      - preguntas
+      summary: Obtener todas las preguntas
+      operationId: preguntasGET
+      responses:
+        "200":
+          description: Lista de preguntas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePreguntas'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Preguntas
+    post:
+      tags:
+      - preguntas
+      summary: Crear una nueva pregunta
+      operationId: preguntasPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pregunta'
+        required: true
+      responses:
+        "201":
+          description: Pregunta creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Preguntas
+  /preguntas/{id}:
+    get:
+      tags:
+      - preguntas
+      summary: Obtener una pregunta por ID
+      operationId: preguntasIdGET
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Pregunta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePregunta'
+        "404":
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Preguntas
+    put:
+      tags:
+      - preguntas
+      summary: Actualizar una pregunta por ID
+      operationId: preguntasIdPUT
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pregunta'
+        required: true
+      responses:
+        "200":
+          description: Pregunta actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Preguntas
+    delete:
+      tags:
+      - preguntas
+      summary: Eliminar una pregunta por ID
+      operationId: preguntasIdDELETE
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Pregunta eliminada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Preguntas
+  /opcionesRespuestas:
+    get:
+      tags:
+      - opcionesRespuestas
+      summary: Obtener todas las opciones de respuesta
+      operationId: opcionesRespuestasGET
+      responses:
+        "200":
+          description: Lista de opciones de respuesta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseOpcionesRespuestas'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: OpcionesRespuestas
+    post:
+      tags:
+      - opcionesRespuestas
+      summary: Crear una nueva opción de respuesta
+      operationId: opcionesRespuestasPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpcionRespuesta'
+        required: true
+      responses:
+        "201":
+          description: Opción de respuesta creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: OpcionesRespuestas
+  /opcionesRespuestas/{id}:
+    get:
+      tags:
+      - opcionesRespuestas
+      summary: Obtener una opción de respuesta por ID
+      operationId: opcionesRespuestasIdGET
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Opción de respuesta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseOpcionRespuesta'
+        "404":
+          description: Opción de respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: OpcionesRespuestas
+    put:
+      tags:
+      - opcionesRespuestas
+      summary: Actualizar una opción de respuesta por ID
+      operationId: opcionesRespuestasIdPUT
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpcionRespuesta'
+        required: true
+      responses:
+        "200":
+          description: Opción de respuesta actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Opción de respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: OpcionesRespuestas
+    delete:
+      tags:
+      - opcionesRespuestas
+      summary: Eliminar una opción de respuesta por ID
+      operationId: opcionesRespuestasIdDELETE
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Opción de respuesta eliminada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Opción de respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: OpcionesRespuestas
+components:
+  schemas:
+    Pregunta:
+      required:
+      - active
+      - enunciado
+      - id
+      - titulo
+      type: object
+      properties:
+        id:
+          type: integer
+        titulo:
+          type: string
+        enunciado:
+          type: string
+        active:
+          type: boolean
+      example:
+        enunciado: enunciado
+        titulo: titulo
+        active: true
+        id: 1
+    OpcionRespuesta:
+      required:
+      - active
+      - id
+      - respuesta
+      type: object
+      properties:
+        id:
+          type: integer
+        respuesta:
+          type: string
+        active:
+          type: boolean
+      example:
+        active: true
+        id: 5
+        respuesta: respuesta
+    Consulta:
+      required:
+      - id
+      - idConsulta
+      - opcionesRespuestas
+      - preguntas
+      type: object
+      properties:
+        id:
+          type: integer
+        idConsulta:
+          type: integer
+        preguntas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pregunta'
+        opcionesRespuestas:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpcionRespuesta'
+      example:
+        opcionesRespuestas:
+        - active: true
+          id: 5
+          respuesta: respuesta
+        - active: true
+          id: 5
+          respuesta: respuesta
+        preguntas:
+        - enunciado: enunciado
+          titulo: titulo
+          active: true
+          id: 1
+        - enunciado: enunciado
+          titulo: titulo
+          active: true
+          id: 1
+        id: 0
+        idConsulta: 6
+    RespuestaUsuario:
+      required:
+      - id
+      - idConsulta
+      - idOpcionRespuesta
+      - idPregunta
+      type: object
+      properties:
+        id:
+          type: integer
+        idConsulta:
+          type: integer
+        idPregunta:
+          type: integer
+        idOpcionRespuesta:
+          type: integer
+      example:
+        id: 0
+        idOpcionRespuesta: 5
+        idConsulta: 6
+        idPregunta: 1
+    Status:
+      required:
+      - message
+      - status
+      type: object
+      properties:
+        status:
+          type: integer
+          description: Estado en la que acaba la llamada
+          example: 200
+        message:
+          type: string
+          description: Mensaje que describe el estatus que se ha puesto
+          example: La llamada ha ido bien
+      example:
+        message: La llamada ha ido bien
+        status: 200
+    ResponseConsultas:
+      required:
+      - consultas
+      - status
+      type: object
+      properties:
+        consultas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Consulta'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        consultas:
+        - opcionesRespuestas:
+          - active: true
+            id: 5
+            respuesta: respuesta
+          - active: true
+            id: 5
+            respuesta: respuesta
+          preguntas:
+          - enunciado: enunciado
+            titulo: titulo
+            active: true
+            id: 1
+          - enunciado: enunciado
+            titulo: titulo
+            active: true
+            id: 1
+          id: 0
+          idConsulta: 6
+        - opcionesRespuestas:
+          - active: true
+            id: 5
+            respuesta: respuesta
+          - active: true
+            id: 5
+            respuesta: respuesta
+          preguntas:
+          - enunciado: enunciado
+            titulo: titulo
+            active: true
+            id: 1
+          - enunciado: enunciado
+            titulo: titulo
+            active: true
+            id: 1
+          id: 0
+          idConsulta: 6
+        status:
+          message: La llamada ha ido bien
+          status: 200
+    ResponseConsulta:
+      required:
+      - consulta
+      - status
+      type: object
+      properties:
+        consulta:
+          $ref: '#/components/schemas/Consulta'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        consulta:
+          opcionesRespuestas:
+          - active: true
+            id: 5
+            respuesta: respuesta
+          - active: true
+            id: 5
+            respuesta: respuesta
+          preguntas:
+          - enunciado: enunciado
+            titulo: titulo
+            active: true
+            id: 1
+          - enunciado: enunciado
+            titulo: titulo
+            active: true
+            id: 1
+          id: 0
+          idConsulta: 6
+        status:
+          message: La llamada ha ido bien
+          status: 200
+    ResponsePreguntas:
+      required:
+      - preguntas
+      - status
+      type: object
+      properties:
+        preguntas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Pregunta'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        preguntas:
+        - enunciado: enunciado
+          titulo: titulo
+          active: true
+          id: 1
+        - enunciado: enunciado
+          titulo: titulo
+          active: true
+          id: 1
+        status:
+          message: La llamada ha ido bien
+          status: 200
+    ResponsePregunta:
+      required:
+      - pregunta
+      - status
+      type: object
+      properties:
+        pregunta:
+          $ref: '#/components/schemas/Pregunta'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        pregunta:
+          enunciado: enunciado
+          titulo: titulo
+          active: true
+          id: 1
+        status:
+          message: La llamada ha ido bien
+          status: 200
+    ResponseOpcionesRespuestas:
+      required:
+      - opcionesRespuestas
+      - status
+      type: object
+      properties:
+        opcionesRespuestas:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpcionRespuesta'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        opcionesRespuestas:
+        - active: true
+          id: 5
+          respuesta: respuesta
+        - active: true
+          id: 5
+          respuesta: respuesta
+        status:
+          message: La llamada ha ido bien
+          status: 200
+    ResponseOpcionRespuesta:
+      required:
+      - opcionRespuesta
+      - status
+      type: object
+      properties:
+        opcionRespuesta:
+          $ref: '#/components/schemas/OpcionRespuesta'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        opcionRespuesta:
+          active: true
+          id: 5
+          respuesta: respuesta
+        status:
+          message: La llamada ha ido bien
+          status: 200
+    ResponseRespuestaUsuario:
+      required:
+      - respuestaUsuario
+      - status
+      type: object
+      properties:
+        respuestaUsuario:
+          $ref: '#/components/schemas/RespuestaUsuario'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        respuestaUsuario:
+          id: 0
+          idOpcionRespuesta: 5
+          idConsulta: 6
+          idPregunta: 1
+        status:
+          message: La llamada ha ido bien
+          status: 200
+    ResponseStatus:
+      required:
+      - status
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        status:
+          message: La llamada ha ido bien
+          status: 200
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
