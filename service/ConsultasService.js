@@ -12,7 +12,6 @@ var utils = require('../utils/writer.js');
  **/
 exports.consultasGET = function() {
   return new Promise(function(resolve, reject) {
-    console.log('holaaa');
     extraService.get(null, "ffsj_consultas_consultas", null).then(res => {
       console.log('Response -> ', res);
       resolve(extraService.transformResponse(res, "consultas", true));
@@ -53,45 +52,36 @@ exports.consultasIdDELETE = function(consulta) {
  * id Integer 
  * returns ResponseConsulta
  **/
-exports.consultasIdGET = function() {
-  return new Promise(function(resolve) {
-    var examples = {};
-    examples['application/json'] = {
-  "consulta" : {
-    "opcionesRespuestas" : [ {
-      "active" : true,
-      "id" : 5,
-      "respuesta" : "respuesta"
-    }, {
-      "active" : true,
-      "id" : 5,
-      "respuesta" : "respuesta"
-    } ],
-    "preguntas" : [ {
-      "enunciado" : "enunciado",
-      "titulo" : "titulo",
-      "active" : true,
-      "id" : 1
-    }, {
-      "enunciado" : "enunciado",
-      "titulo" : "titulo",
-      "active" : true,
-      "id" : 1
-    } ],
-    "id" : 0,
-    "idConsulta" : 6
-  },
-  "status" : {
-    "message" : "La llamada ha ido bien",
-    "status" : 200
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
-  });
+exports.consultasIdGET = function(consulta) {
+  return new Promise(function(resolve, reject) {
+    let response = {};
+    extraService.get(consulta, "ffsj_consultas_consultas").then(res => {
+      response = res[0];
+      response.preguntas = [];
+      extraService.get(null, null, 'SELECT * FROM u438573835_censo.ffsj_consultas_preguntas where idConsulta = ' + consulta +';').then(preguntas => {
+        console.log('Preguntas -> ', preguntas);
+        let promesasOpcionesRespuestas = preguntas.map(pregunta => {
+          return new Promise((resolvePregunta) => {
+            pregunta.opcionesRespuestas = [];
+            extraService.get(null, null, 'SELECT * FROM u438573835_censo.ffsj_consultas_opciones_respuestas where idPregunta = ' + pregunta.id +';').then(opcionesRespuestas => {
+              console.log('OPCIONES -> ', opcionesRespuestas);
+              pregunta.opcionesRespuestas = opcionesRespuestas;
+              console.log('Pregunta -> ', pregunta);
+              resolvePregunta(pregunta); // Resuelve la promesa con la pregunta completa
+            });
+          });
+        });
+
+        Promise.all(promesasOpcionesRespuestas).then(preguntasCompletas => {
+          response.preguntas = preguntasCompletas;
+          console.log('RESPONSE -> ', response);
+          resolve(extraService.transformResponse(response, "consulta", true)); // Esto se mueve aquí
+        });
+      })
+    }).catch(res => {
+      reject(utils.respondWithCode(500, res));
+    });
+});
 }
 
 
