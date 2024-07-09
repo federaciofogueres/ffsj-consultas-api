@@ -1,6 +1,7 @@
 'use strict';
 
 var extraService = require("../service/ExtraService");
+var utils = require('../utils/writer.js');
 
 /**
  * Obtener todas las preguntas
@@ -96,7 +97,7 @@ exports.preguntasIdPUT = function() {
 exports.preguntasPOST = function(body) {
   return new Promise(function(resolve, reject) {
     extraService.set(body, 'ffsj_consultas_preguntas', false).then(res => {
-      console.log(res);
+      console.log('AQUÏIIIIIII -> ', res);
       resolve(extraService.transformResponse(res, 'preguntas', true));
     }).catch(err => {
       reject(utils.respondWithCode(500, err))

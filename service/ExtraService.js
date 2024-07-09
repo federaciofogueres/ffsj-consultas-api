@@ -3,6 +3,8 @@ const cifrar = require('./CifrarService');
 
 exports.transformResponse = function (res, object, responseOK) {
     var response = {};
+    console.log('aquíiiii ', response, res, object, responseOK);
+
     if (responseOK) {
         response = {
             status: {

@@ -127,40 +127,52 @@ exports.consultasIdPUT = function() {
  * returns ResponseStatus
  **/
 exports.consultasPOST = function(body) {
-  return new Promise(function(_resolve, reject) {
+  return new Promise(function(resolve, reject) {
     let bodyToProcess = {
       id: body.id,
       fecha: body.fecha,
       titulo: body.titulo,
       votosTotales: body.votosTotales,
     };
+    let response = {};
     try {
-      extraService.set(bodyToProcess, "ffsj_consultas_consultas", false).then((idConsulta) => {
+      extraService.set(bodyToProcess, "ffsj_consultas_consultas", false).then(async (idConsulta) => { // Asegúrate de que esta función sea async
         console.log('Consulta creada -> ', idConsulta);
+        response.idConsulta = idConsulta;
+        response.preguntas = [];
+    
+        try {
 
-        for (let pregunta of body.preguntas) {
-          let opcionesRespuestas = pregunta.opcionesRespuestas;
-          delete pregunta.opcionesRespuestas;
-          pregunta.idConsulta = idConsulta;
-          preguntasService.preguntasPOST(pregunta).then(pregunta => {
-
-            for (let opcion of opcionesRespuestas) {
-              opcion.idPregunta = pregunta.preguntas;
-              opcionesRespuestasService.opcionesRespuestasPOST(opcion).then(res => {
-                console.log('Opciones de respuesta creadas -> ', res);
+          for (let pregunta of body.preguntas) {
+            let opcionesRespuestas = pregunta.opcionesRespuestas;
+            delete pregunta.opcionesRespuestas;
+            pregunta.idConsulta = idConsulta;
+            await preguntasService.preguntasPOST(pregunta).then(async (pregunta) => { // Asegúrate de que esta función sea async
+              let preguntaResponse = {};
+              preguntaResponse.id = pregunta.preguntas;
+              preguntaResponse.opciones = [];
+              let promesasOpcionesRespuestas = opcionesRespuestas.map(opcion => {
+                opcion.idPregunta = pregunta.preguntas;
+                return opcionesRespuestasService.opcionesRespuestasPOST(opcion);
               });
-            }
-
-          })
+    
+              await Promise.all(promesasOpcionesRespuestas).then(res => {
+                for (let resOpcion of res) { 
+                  preguntaResponse.opciones.push(resOpcion.opcionesRespuestas);
+                }
+              });
+              response.preguntas.push(preguntaResponse);
+    
+              // Aquí puedes continuar con el código que depende de la resolución de todas las promesas
+            });
+          }
+          resolve(extraService.transformResponse(response, "consultas", true));
+        } catch (error) {
+          reject(utils.respondWithCode(500, error));
         }
-        console.log('Contadores ---> ', opcionesRespuestasContador, preguntasContador);
-      }).catch(errCreate => {
-        reject(utils.respondWithCode(500, errCreate));
       });
     } catch (error) {
-      reject(utils.respondWithCode(500, error));          
+      console.error(error);
     }
   });
 }
-
-
