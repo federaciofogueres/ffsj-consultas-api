@@ -1,13 +1,14 @@
 'use strict';
 
-
+var extraService = require("../service/ExtraService");
+var utils = require('../utils/writer.js');
 /**
  * Obtener todas las opciones de respuesta
  *
  * returns ResponseOpcionesRespuestas
  **/
 exports.opcionesRespuestasGET = function() {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve) {
     var examples = {};
     examples['application/json'] = {
   "opcionesRespuestas" : [ {
@@ -39,8 +40,8 @@ exports.opcionesRespuestasGET = function() {
  * id Integer 
  * returns ResponseStatus
  **/
-exports.opcionesRespuestasIdDELETE = function(id) {
-  return new Promise(function(resolve, reject) {
+exports.opcionesRespuestasIdDELETE = function() {
+  return new Promise(function(resolve) {
     var examples = {};
     examples['application/json'] = {
   "status" : {
@@ -63,8 +64,8 @@ exports.opcionesRespuestasIdDELETE = function(id) {
  * id Integer 
  * returns ResponseOpcionRespuesta
  **/
-exports.opcionesRespuestasIdGET = function(id) {
-  return new Promise(function(resolve, reject) {
+exports.opcionesRespuestasIdGET = function() {
+  return new Promise(function(resolve) {
     var examples = {};
     examples['application/json'] = {
   "opcionRespuesta" : {
@@ -93,8 +94,8 @@ exports.opcionesRespuestasIdGET = function(id) {
  * id Integer 
  * returns ResponseStatus
  **/
-exports.opcionesRespuestasIdPUT = function(body,id) {
-  return new Promise(function(resolve, reject) {
+exports.opcionesRespuestasIdPUT = function() {
+  return new Promise(function(resolve) {
     var examples = {};
     examples['application/json'] = {
   "status" : {
@@ -119,18 +120,11 @@ exports.opcionesRespuestasIdPUT = function(body,id) {
  **/
 exports.opcionesRespuestasPOST = function(body) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "status" : {
-    "message" : "La llamada ha ido bien",
-    "status" : 200
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+    extraService.set(body, 'ffsj_consultas_opciones_respuestas', false).then(res => {
+      resolve(extraService.transformResponse(res, 'opcionesRespuestas', true));
+    }).catch(err => {
+      reject(utils.respondWithCode(500, err))
+    })
   });
 }
 

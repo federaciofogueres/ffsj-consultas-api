@@ -528,11 +528,6 @@ paths:
 components:
   schemas:
     Pregunta:
-      required:
-      - active
-      - enunciado
-      - id
-      - titulo
       type: object
       properties:
         id:
@@ -543,16 +538,26 @@ components:
           type: string
         active:
           type: boolean
+        idConsulta:
+          type: integer
+        opcionesRespuestas:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpcionRespuesta'          
+      required:
+        - id
+        - titulo
+        - enunciado
+        - active
+        - idConsulta
+        - opcionesRespuestas
       example:
         enunciado: enunciado
         titulo: titulo
         active: true
         id: 1
+        idConsulta: 1
     OpcionRespuesta:
-      required:
-      - active
-      - id
-      - respuesta
       type: object
       properties:
         id:
@@ -561,30 +566,38 @@ components:
           type: string
         active:
           type: boolean
+        idPregunta:
+          type: integer
+      required:
+        - id
+        - respuesta
+        - active
+        - idPregunta
       example:
         active: true
         id: 5
         respuesta: respuesta
     Consulta:
-      required:
-      - id
-      - idConsulta
-      - opcionesRespuestas
-      - preguntas
       type: object
       properties:
         id:
           type: integer
-        idConsulta:
+        fecha:
+          type: string
+        titulo:
+          type: string
+        votosTotales:
           type: integer
         preguntas:
           type: array
           items:
             $ref: '#/components/schemas/Pregunta'
-        opcionesRespuestas:
-          type: array
-          items:
-            $ref: '#/components/schemas/OpcionRespuesta'
+      required:
+        - id
+        - fecha
+        - titulo
+        - votosTotales
+        - preguntas
       example:
         opcionesRespuestas:
         - active: true

@@ -4,8 +4,9 @@
   "description": "API para gestionar consultas de usuarios.",
   "main": "index.js",
   "scripts": {
-	"prestart": "npm install",
-	"start": "node index.js"
+    "prestart": "npm install",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [
     "swagger"
@@ -13,8 +14,11 @@
   "license": "Unlicense",
   "private": true,
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "connect": "^3.2.0",
     "js-yaml": "^3.3.0",
+    "mysql": "^2.18.1",
+    "nodemon": "^3.1.4",
     "oas3-tools": "^2.2.3"
   }
 }

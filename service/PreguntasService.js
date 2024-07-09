@@ -1,5 +1,6 @@
 'use strict';
 
+var extraService = require("../service/ExtraService");
 
 /**
  * Obtener todas las preguntas
@@ -7,7 +8,7 @@
  * returns ResponsePreguntas
  **/
 exports.preguntasGET = function() {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve) {
     var examples = {};
     examples['application/json'] = {
   "preguntas" : [ {
@@ -41,8 +42,8 @@ exports.preguntasGET = function() {
  * id Integer 
  * returns ResponseStatus
  **/
-exports.preguntasIdDELETE = function(id) {
-  return new Promise(function(resolve, reject) {
+exports.preguntasIdDELETE = function() {
+  return new Promise(function(resolve) {
     var examples = {};
     examples['application/json'] = {
   "status" : {
@@ -65,26 +66,16 @@ exports.preguntasIdDELETE = function(id) {
  * id Integer 
  * returns ResponsePregunta
  **/
-exports.preguntasIdGET = function(id) {
+exports.preguntasIdGET = function(pregunta) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "pregunta" : {
-    "enunciado" : "enunciado",
-    "titulo" : "titulo",
-    "active" : true,
-    "id" : 1
-  },
-  "status" : {
-    "message" : "La llamada ha ido bien",
-    "status" : 200
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+    extraService.get(pregunta, "ffsj_consultas_preguntas").then(res => {
+      if(res !== 0)
+        resolve(extraService.transformResponse(res, "preguntas", true));
+      else
+        reject(utils.respondWithCode(404, extraService.transformResponse({codigo: 404, message: "No existe la pregunta " + pregunta}, null, false)));
+    }).catch(res => {
+      reject(utils.respondWithCode(500, res));
+    });
   });
 }
 
@@ -96,8 +87,8 @@ exports.preguntasIdGET = function(id) {
  * id Integer 
  * returns ResponseStatus
  **/
-exports.preguntasIdPUT = function(body,id) {
-  return new Promise(function(resolve, reject) {
+exports.preguntasIdPUT = function() {
+  return new Promise(function(resolve) {
     var examples = {};
     examples['application/json'] = {
   "status" : {
@@ -122,18 +113,12 @@ exports.preguntasIdPUT = function(body,id) {
  **/
 exports.preguntasPOST = function(body) {
   return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "status" : {
-    "message" : "La llamada ha ido bien",
-    "status" : 200
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+    extraService.set(body, 'ffsj_consultas_preguntas', false).then(res => {
+      console.log(res);
+      resolve(extraService.transformResponse(res, 'preguntas', true));
+    }).catch(err => {
+      reject(utils.respondWithCode(500, err))
+    })
   });
 }
 
