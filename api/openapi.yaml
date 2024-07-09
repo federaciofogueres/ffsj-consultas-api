@@ -620,14 +620,14 @@ components:
     RespuestaUsuario:
       required:
       - id
-      - idConsulta
+      - idAsociado
       - idOpcionRespuesta
       - idPregunta
       type: object
       properties:
         id:
           type: integer
-        idConsulta:
+        idAsociado:
           type: integer
         idPregunta:
           type: integer
@@ -636,7 +636,7 @@ components:
       example:
         id: 0
         idOpcionRespuesta: 5
-        idConsulta: 6
+        idAsociado: 6
         idPregunta: 1
     Status:
       required:
