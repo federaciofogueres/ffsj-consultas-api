@@ -8,28 +8,12 @@ var utils = require('../utils/writer.js');
  * returns ResponseOpcionesRespuestas
  **/
 exports.opcionesRespuestasGET = function() {
-  return new Promise(function(resolve) {
-    var examples = {};
-    examples['application/json'] = {
-  "opcionesRespuestas" : [ {
-    "active" : true,
-    "id" : 5,
-    "respuesta" : "respuesta"
-  }, {
-    "active" : true,
-    "id" : 5,
-    "respuesta" : "respuesta"
-  } ],
-  "status" : {
-    "message" : "La llamada ha ido bien",
-    "status" : 200
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+  return new Promise(function(resolve, reject) {
+    extraService.get(null, "ffsj_consultas_opciones_respuestas", null).then(res => {
+      resolve(extraService.transformResponse(res, "opciones_respuestas", true));
+    }).catch(res => {
+      reject(utils.respondWithCode(500, res));
+    });
   });
 }
 
@@ -64,25 +48,16 @@ exports.opcionesRespuestasIdDELETE = function() {
  * id Integer 
  * returns ResponseOpcionRespuesta
  **/
-exports.opcionesRespuestasIdGET = function() {
-  return new Promise(function(resolve) {
-    var examples = {};
-    examples['application/json'] = {
-  "opcionRespuesta" : {
-    "active" : true,
-    "id" : 5,
-    "respuesta" : "respuesta"
-  },
-  "status" : {
-    "message" : "La llamada ha ido bien",
-    "status" : 200
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+exports.opcionesRespuestasIdGET = function(opcionesRespuestas) {
+  return new Promise(function(resolve, reject) {
+    extraService.get(opcionesRespuestas, "ffsj_consultas_opciones_respuestas").then(res => {
+      if(res !== 0)
+        resolve(extraService.transformResponse(res, "opciones_respuestas", true));
+      else
+        reject(utils.respondWithCode(404, extraService.transformResponse({codigo: 404, message: "No existe la opción de respuesta " + opcionesRespuestas}, null, false)));
+    }).catch(res => {
+      reject(utils.respondWithCode(500, res));
+    });
   });
 }
 

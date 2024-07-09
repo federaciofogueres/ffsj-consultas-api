@@ -8,30 +8,12 @@ var extraService = require("../service/ExtraService");
  * returns ResponsePreguntas
  **/
 exports.preguntasGET = function() {
-  return new Promise(function(resolve) {
-    var examples = {};
-    examples['application/json'] = {
-  "preguntas" : [ {
-    "enunciado" : "enunciado",
-    "titulo" : "titulo",
-    "active" : true,
-    "id" : 1
-  }, {
-    "enunciado" : "enunciado",
-    "titulo" : "titulo",
-    "active" : true,
-    "id" : 1
-  } ],
-  "status" : {
-    "message" : "La llamada ha ido bien",
-    "status" : 200
-  }
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
-    }
+  return new Promise(function(resolve, reject) {
+    extraService.get(null, "ffsj_consultas_preguntas", null).then(res => {
+      resolve(extraService.transformResponse(res, "preguntas", true));
+    }).catch(res => {
+      reject(utils.respondWithCode(500, res));
+    });
   });
 }
 
