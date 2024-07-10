@@ -16,6 +16,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "connect": "^3.2.0",
+    "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "js-yaml": "^3.3.0",
     "mysql": "^2.18.1",
