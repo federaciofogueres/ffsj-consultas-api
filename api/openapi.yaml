@@ -7,7 +7,7 @@ servers:
 - url: https://virtserver.swaggerhub.com/FFSJ/APP-Plenos/1.0.0
   description: SwaggerHub API Auto Mocking
 tags:
-- name: ºconsultas
+- name: consultas
   description: Llamadas que tenga que ver con las consultas
 - name: respuestasUsuarios
   description: Llamadas que tenga que ver con las respuestas usuarios
@@ -15,6 +15,8 @@ tags:
   description: Llamadas que tenga que ver con las preguntas
 - name: opcionesRespuestas
   description: Llamadas que tenga que ver con las opcionesRespuestas
+- name: autorizacionesConsultas
+  description: Llamadas que tenga que ver con las autorizacionesConsultas
 paths:
   /consultas:
     get:
@@ -147,6 +149,174 @@ paths:
       security:
       - bearerAuth: []
       x-swagger-router-controller: Consultas
+  /consultas/{idConsulta}/autorizados:
+    get:
+      tags:
+      - autorizacionesConsultas
+      summary: Obtener todas las autorizaciones de una consulta
+      operationId: consultasIdConsultaAutorizadosGET
+      parameters:
+      - name: idConsulta
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Lista de autorizaciones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseAutorizaciones'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: AutorizacionesConsultas
+    post:
+      tags:
+      - autorizacionesConsultas
+      summary: Crear una nueva autorización
+      operationId: consultasIdConsultaAutorizadosPOST
+      parameters:
+      - name: idConsulta
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Autorizacion'
+        required: true
+      responses:
+        "201":
+          description: Autorización creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: AutorizacionesConsultas
+  /consultas/{idConsulta}/autorizados/{idAsociado}:
+    get:
+      tags:
+      - autorizacionesConsultas
+      summary: Obtener una autorización de usuario por ID
+      operationId: consultasIdConsultaAutorizadosIdUsuarioGET
+      parameters:
+      - name: idConsulta
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: idAsociado
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Autorización encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseAutorizacion'
+        "404":
+          description: Autorización no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: AutorizacionesConsultas
+    put:
+      tags:
+      - autorizacionesConsultas
+      summary: Actualizar una autorización de usuario en una consulta
+      operationId: consultasIdConsultaAutorizadosIdUsuarioPUT
+      parameters:
+      - name: idConsulta
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: idAsociado
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Autorizacion'
+        required: true
+      responses:
+        "200":
+          description: Respuesta actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: AutorizacionesConsultas
+    delete:
+      tags:
+      - autorizacionesConsultas
+      summary: Eliminar una autorización de usuario por ID
+      operationId: consultasIdConsultaAutorizadosIdUsuarioDELETE
+      parameters:
+      - name: idConsulta
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: idAsociado
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "204":
+          description: Autorización eliminada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+        "404":
+          description: Respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: AutorizacionesConsultas
   /respuestasUsuarios:
     post:
       tags:
@@ -527,7 +697,27 @@ paths:
       x-swagger-router-controller: OpcionesRespuestas
 components:
   schemas:
+    Autorizacion:
+      required:
+      - idConsulta
+      - idAsociado
+      type: object
+      properties:
+        idConsulta:
+          type: integer
+        idAsociado:
+          type: integer
+      example:
+        idAsociado: 6
+        idConsulta: 0
     Pregunta:
+      required:
+      - active
+      - enunciado
+      - id
+      - idConsulta
+      - opcionesRespuestas
+      - titulo
       type: object
       properties:
         id:
@@ -543,21 +733,28 @@ components:
         opcionesRespuestas:
           type: array
           items:
-            $ref: '#/components/schemas/OpcionRespuesta'          
-      required:
-        - id
-        - titulo
-        - enunciado
-        - active
-        - idConsulta
-        - opcionesRespuestas
+            $ref: '#/components/schemas/OpcionRespuesta'
       example:
+        opcionesRespuestas:
+        - active: true
+          id: 5
+          respuesta: respuesta
+          idPregunta: 2
+        - active: true
+          id: 5
+          respuesta: respuesta
+          idPregunta: 2
         enunciado: enunciado
         titulo: titulo
         active: true
         id: 1
-        idConsulta: 1
+        idConsulta: 5
     OpcionRespuesta:
+      required:
+      - active
+      - id
+      - idPregunta
+      - respuesta
       type: object
       properties:
         id:
@@ -568,16 +765,19 @@ components:
           type: boolean
         idPregunta:
           type: integer
-      required:
-        - id
-        - respuesta
-        - active
-        - idPregunta
       example:
         active: true
         id: 5
         respuesta: respuesta
+        idPregunta: 2
     Consulta:
+      required:
+      - fecha
+      - id
+      - necesitaAutorizacion
+      - preguntas
+      - titulo
+      - votosTotales
       type: object
       properties:
         id:
@@ -592,35 +792,44 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Pregunta'
-      required:
-        - id
-        - fecha
-        - titulo
-        - votosTotales
-        - preguntas
       example:
-        opcionesRespuestas:
-        - active: true
-          id: 5
-          respuesta: respuesta
-        - active: true
-          id: 5
-          respuesta: respuesta
+        fecha: fecha
+        titulo: titulo
         preguntas:
-        - enunciado: enunciado
+        - opcionesRespuestas:
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
+          enunciado: enunciado
           titulo: titulo
           active: true
           id: 1
-        - enunciado: enunciado
+          idConsulta: 5
+        - opcionesRespuestas:
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
+          enunciado: enunciado
           titulo: titulo
           active: true
           id: 1
+          idConsulta: 5
         id: 0
-        idConsulta: 6
+        votosTotales: 6
     RespuestaUsuario:
       required:
       - id
-      - idAsociado
+      - idConsulta
       - idOpcionRespuesta
       - idPregunta
       type: object
@@ -634,9 +843,9 @@ components:
         idOpcionRespuesta:
           type: integer
       example:
+        idAsociado: 6
         id: 0
         idOpcionRespuesta: 5
-        idAsociado: 6
         idPregunta: 1
     Status:
       required:
@@ -655,6 +864,44 @@ components:
       example:
         message: La llamada ha ido bien
         status: 200
+    ResponseAutorizaciones:
+      required:
+      - autorizaciones
+      - status
+      type: object
+      properties:
+        autorizaciones:
+          type: array
+          items:
+            $ref: '#/components/schemas/Autorizacion'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        autorizaciones:
+        - idAsociado: 6
+          idConsulta: 0
+        - idAsociado: 6
+          idConsulta: 0
+        status:
+          message: La llamada ha ido bien
+          status: 200
+    ResponseAutorizacion:
+      required:
+      - autorizacion
+      - status
+      type: object
+      properties:
+        autorizacion:
+          $ref: '#/components/schemas/Autorizacion'
+        status:
+          $ref: '#/components/schemas/Status'
+      example:
+        autorizacion:
+          idAsociado: 6
+          idConsulta: 0
+        status:
+          message: La llamada ha ido bien
+          status: 200
     ResponseConsultas:
       required:
       - consultas
@@ -669,42 +916,72 @@ components:
           $ref: '#/components/schemas/Status'
       example:
         consultas:
-        - opcionesRespuestas:
-          - active: true
-            id: 5
-            respuesta: respuesta
-          - active: true
-            id: 5
-            respuesta: respuesta
+        - fecha: fecha
+          titulo: titulo
           preguntas:
-          - enunciado: enunciado
+          - opcionesRespuestas:
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            enunciado: enunciado
             titulo: titulo
             active: true
             id: 1
-          - enunciado: enunciado
+            idConsulta: 5
+          - opcionesRespuestas:
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            enunciado: enunciado
             titulo: titulo
             active: true
             id: 1
+            idConsulta: 5
           id: 0
-          idConsulta: 6
-        - opcionesRespuestas:
-          - active: true
-            id: 5
-            respuesta: respuesta
-          - active: true
-            id: 5
-            respuesta: respuesta
+          votosTotales: 6
+        - fecha: fecha
+          titulo: titulo
           preguntas:
-          - enunciado: enunciado
+          - opcionesRespuestas:
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            enunciado: enunciado
             titulo: titulo
             active: true
             id: 1
-          - enunciado: enunciado
+            idConsulta: 5
+          - opcionesRespuestas:
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            enunciado: enunciado
             titulo: titulo
             active: true
             id: 1
+            idConsulta: 5
           id: 0
-          idConsulta: 6
+          votosTotales: 6
         status:
           message: La llamada ha ido bien
           status: 200
@@ -720,24 +997,39 @@ components:
           $ref: '#/components/schemas/Status'
       example:
         consulta:
-          opcionesRespuestas:
-          - active: true
-            id: 5
-            respuesta: respuesta
-          - active: true
-            id: 5
-            respuesta: respuesta
+          fecha: fecha
+          titulo: titulo
           preguntas:
-          - enunciado: enunciado
+          - opcionesRespuestas:
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            enunciado: enunciado
             titulo: titulo
             active: true
             id: 1
-          - enunciado: enunciado
+            idConsulta: 5
+          - opcionesRespuestas:
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            - active: true
+              id: 5
+              respuesta: respuesta
+              idPregunta: 2
+            enunciado: enunciado
             titulo: titulo
             active: true
             id: 1
+            idConsulta: 5
           id: 0
-          idConsulta: 6
+          votosTotales: 6
         status:
           message: La llamada ha ido bien
           status: 200
@@ -755,14 +1047,34 @@ components:
           $ref: '#/components/schemas/Status'
       example:
         preguntas:
-        - enunciado: enunciado
+        - opcionesRespuestas:
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
+          enunciado: enunciado
           titulo: titulo
           active: true
           id: 1
-        - enunciado: enunciado
+          idConsulta: 5
+        - opcionesRespuestas:
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
+          enunciado: enunciado
           titulo: titulo
           active: true
           id: 1
+          idConsulta: 5
         status:
           message: La llamada ha ido bien
           status: 200
@@ -778,10 +1090,20 @@ components:
           $ref: '#/components/schemas/Status'
       example:
         pregunta:
+          opcionesRespuestas:
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
+          - active: true
+            id: 5
+            respuesta: respuesta
+            idPregunta: 2
           enunciado: enunciado
           titulo: titulo
           active: true
           id: 1
+          idConsulta: 5
         status:
           message: La llamada ha ido bien
           status: 200
@@ -802,9 +1124,11 @@ components:
         - active: true
           id: 5
           respuesta: respuesta
+          idPregunta: 2
         - active: true
           id: 5
           respuesta: respuesta
+          idPregunta: 2
         status:
           message: La llamada ha ido bien
           status: 200
@@ -823,6 +1147,7 @@ components:
           active: true
           id: 5
           respuesta: respuesta
+          idPregunta: 2
         status:
           message: La llamada ha ido bien
           status: 200
@@ -838,9 +1163,9 @@ components:
           $ref: '#/components/schemas/Status'
       example:
         respuestaUsuario:
+          idAsociado: 6
           id: 0
           idOpcionRespuesta: 5
-          idConsulta: 6
           idPregunta: 1
         status:
           message: La llamada ha ido bien

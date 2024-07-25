@@ -47,7 +47,7 @@ var processSQLResponse = async function(rows) {
 
 var get = exports.get = async function(codigo, table, sqlExpression = null) {
     return new Promise(async function (resolve, reject) {
-        var connection = connectionBD.connect();
+        var connection = connectionBD.pool;
         if (connection) {
             var sql = 'SELECT * FROM ' + connectionBD.DB + '.' + table;
             if (sqlExpression) {
@@ -60,7 +60,7 @@ var get = exports.get = async function(codigo, table, sqlExpression = null) {
             console.log('GET SQL ---> ', sql);
             connection.query(sql, async function (err, rows) {
                 if (err) reject('Error al realizar la consulta: ' + err);
-                connectionBD.closeConnect(connection);
+                // connectionBD.closeConnect(connection);
                 if (rows.length == 0) {
                     resolve(rows.length);
                 } else {
@@ -97,7 +97,7 @@ var processSQLPostRequest = async function(insertObject) {
 
 exports.set = async function(insertObject, table, returnId = false) {
     return new Promise(async function (resolve, reject) {
-        var connection = connectionBD.connect();
+        var connection = connectionBD.pool;
         if (connection) {
             var sql = `INSERT INTO ${connectionBD.DB}.${table}` + await processSQLPostRequest(insertObject);
             console.log('SQL SET: ', sql);
@@ -108,10 +108,10 @@ exports.set = async function(insertObject, table, returnId = false) {
                 }
                 if (rows) {
                     console.log('Objeto creado -> ', rows);
-                    connectionBD.closeConnect(connection);
+                    // connectionBD.closeConnect(connection);
                     resolve(rows.insertId  ? rows.insertId : insertObject.id);
                 } else {
-                    connectionBD.closeConnect(connection);
+                    // connectionBD.closeConnect(connection);
                     reject('Error al crear el registro.');
                 }
             });
@@ -141,7 +141,7 @@ var processSQLDeleteRequest = exports.processSQLDeleteRequest = async function (
 
 exports.delete = async function (codigo, table, softDelete = false, idCargo = null, idAsociacion = null, idAsociado = null, ejercicio = null) {
     return new Promise(async function (resolve, reject) {
-        var connection = connectionBD.connect();
+        var connection = connectionBD.pool;
         if (connection) {
             var sql = '';
             if (softDelete) {
@@ -154,20 +154,20 @@ exports.delete = async function (codigo, table, softDelete = false, idCargo = nu
                 if (sql.includes("DELETE")) {
                     if (err) reject('Error al realizar el borrado. Error: ' + err);
                     if (rows.affectedRows > 0) {
-                        connectionBD.closeConnect(connection);
+                        // connectionBD.closeConnect(connection);
                         resolve(rows.affectedRows);
                     } else {
-                        connectionBD.closeConnect(connection);
+                        // connectionBD.closeConnect(connection);
                         reject('Error al realizar el borrado.');
                     }
                 } else {
                     console.log(rows)
                     if (err) reject('Error al actualizar el registro. Error: ' + err);
                     if (rows && rows.changedRows >= 1) {
-                        connectionBD.closeConnect(connection);
+                        // connectionBD.closeConnect(connection);
                         resolve("OK");
                     } else {
-                        connectionBD.closeConnect(connection);
+                        // connectionBD.closeConnect(connection);
                         reject('No se pudo actualizar el registro.');
                     }
                 }
@@ -250,7 +250,7 @@ var checkCipherMandatoryData = exports.checkCipherMandatoryData = function(data)
 exports.update = function (updateObject, table, idUpdateObject) {
     updateObject = checkCipherMandatoryData(updateObject);
     return new Promise(async function (resolve, reject) {
-        var connection = connectionBD.connect();
+        var connection = connectionBD.pool;
         if (connection) {
             var sql = `UPDATE ${connectionBD.DB}.${table} SET ` + await processSQLPutRequest(updateObject);
             // if(table === 'historico')
@@ -261,7 +261,7 @@ exports.update = function (updateObject, table, idUpdateObject) {
             console.log('UPDATE SQL: ', sql);
             connection.query(sql, function (err, rows) {
                 if (err) reject('Error al actualizar el registro. Error: ' + err);
-                connectionBD.closeConnect(connection);
+                // connectionBD.closeConnect(connection);
                 if (rows && rows.changedRows >= 1) {
                     resolve(get(idUpdateObject, table));
                 } else if (rows && rows.changedRows === 0 && rows.affectedRows > 0) {
@@ -275,3 +275,33 @@ exports.update = function (updateObject, table, idUpdateObject) {
         }
     });
   };
+
+  var special = exports.special = async function(sqlExpression) {
+    return new Promise(async function (resolve, reject) {
+        var connection = connectionBD.pool;
+        if (connection) {
+            connection.query(sqlExpression, async function (err, rows) {
+                try {
+                    if (err) reject('Error al realizar la consulta: ' + err);
+                        // connectionBD.closeConnect(connection);
+                    if (rows) {
+                        console.log(rows, sqlExpression);
+                        if (rows.length == 0) {
+                            resolve(rows.length);
+                        } else if (rows.affectedRows > 0 && rows.message.includes('Changed: 0')) {
+                            reject('No se ha podido actualizar el registro');
+                        } else if (rows.affectedRows > 0) {
+                            resolve(rows.affectedRows);
+                        } else{
+                            resolve(await processSQLResponse(rows));
+                        }
+                    }
+                } catch (error) {
+                    reject('Error al realizar la consulta: ' + error);                    
+                }
+            });
+        } else {
+            reject('Error al abrir la conexión con la BD.');
+        }
+    });
+}

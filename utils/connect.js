@@ -4,26 +4,48 @@ exports.DB = 'u438573835_censo';
 //exports.DBCensoAntiguo = 'u438573835_intranet1';
 exports.DBCensoAntiguo = 'u438573835_intranet_pre';
 
+// Pool de conexiones a la base de datos de la nueva BBDD
+var pool = exports.pool = mysql.createPool({
+    host: '193.203.168.4',
+    port: '3306',
+    user: 'u438573835_tdgital',
+    password: 'Ef2024FFSJ*',
+    timezone: 'utc'
+});
+
 var connect = exports.connect = function() {
 
-    var connection = mysql.createConnection({
-        host: '193.203.168.4',
-        port: '3306',
-        user: 'u438573835_tdgital',
-        password: 'Ef2024FFSJ*',
-        timezone: 'utc'
-    });
+    try {
+        pool.query('SELECT * FROM u438573835_censo.ejercicios', function(err, rows, fields) {
+            if (err) throw err;
+        });
+    } catch (error) {
+        console.log('Error en la conexión a la base de datos: ', error);
+    }
+    return pool;
 
-    connection.connect();
-    connection.query('SELECT * FROM u438573835_censo.ejercicios', function(err, rows, fields) {
+};
 
-        if (err) throw err;
+// var connect = exports.connect = function() {
+
+//     var connection = mysql.createConnection({
+//         host: '193.203.168.4',
+//         port: '3306',
+//         user: 'u438573835_tdgital',
+//         password: 'Ef2024FFSJ*',
+//         timezone: 'utc'
+//     });
+
+//     connection.connect();
+//     connection.query('SELECT * FROM u438573835_censo.ejercicios', function(err, rows, fields) {
+
+//         if (err) throw err;
         
-    });
+//     });
 
-    return connection;
+//     return connection;
 
-}
+// }
 
 var closeConnect = exports.closeConnect = function(connection) {
 
@@ -62,4 +84,14 @@ var closeConnectCensoAntiguo = exports.closeConnectCensoAntiguo = function(conne
 
     connection.end();
 
+}
+
+// Cuando ya no necesites el pool, por ejemplo, al cerrar tu aplicación, puedes cerrarlo
+// Esto cierra todas las conexiones en el pool
+// Se hace una sola vez, generalmente cuando estás apagando tu aplicación
+exports.closePool = function() {
+    pool.end(function(err) {
+        if (err) throw err;
+        // El pool se ha cerrado
+    });
 }
