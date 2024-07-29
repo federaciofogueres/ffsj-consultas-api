@@ -829,7 +829,7 @@ components:
     RespuestaUsuario:
       required:
       - id
-      - idConsulta
+      - idAsociado
       - idOpcionRespuesta
       - idPregunta
       type: object

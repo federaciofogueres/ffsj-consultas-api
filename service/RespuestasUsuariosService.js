@@ -1,6 +1,7 @@
 'use strict';
 
 var extraService = require("../service/ExtraService");
+var autorizacionesService = require("../service/AutorizacionesConsultasService");
 var utils = require('../utils/writer.js');
 
 /**
@@ -79,15 +80,20 @@ exports.respuestasUsuariosIdPUT = function() {
 exports.respuestasUsuariosPOST = async function(body) { // Paso 2: Hacer la función async
   return new Promise(async function(resolve, reject) { // Añadir async aquí también es opcional
     try {
-      await checkRespuestaExists(body.idPregunta, body.idAsociado); // Paso 2: Usar await
-      extraService.set(body, 'ffsj_consultas_respuestas_usuarios', false).then(res => {
-        console.log('Respuesta almacenada -> ', res);
-        resolve(extraService.transformResponse(res, 'respuestasUsuarios', true));
-      }).catch(err => {
-        reject(utils.respondWithCode(500, err))
-      });
-    } catch (err) {
-      reject(utils.respondWithCode(500, err));
+      await checkAutorizado(body.idPregunta, body.idAsociado); // Paso 3: Usar await
+      try {
+        await checkRespuestaExists(body.idPregunta, body.idAsociado); // Paso 2: Usar await
+        extraService.set(body, 'ffsj_consultas_respuestas_usuarios', false).then(res => {
+          resolve(extraService.transformResponse(res, 'respuestasUsuarios', true));
+        }).catch(err => {
+          reject(utils.respondWithCode(500, err))
+        });
+      } catch (err) {
+        reject(utils.respondWithCode(500, err));
+      }
+    } catch (error) {
+      console.log('Error -> ', error);
+      reject(utils.respondWithCode(500, 'El usuario no está autorizado'));
     }
   });
 }
@@ -104,3 +110,21 @@ var checkRespuestaExists = function (idPregunta, idAsociado) {
   });
 }
 
+
+var checkAutorizado = function (idPregunta, idAsociado) {
+  return new Promise((resolve, reject) => { // Paso 1: Retornar una promesa
+    extraService.special( 
+      `
+      SELECT * FROM u438573835_censo.ffsj_consultas_autorizados where idConsulta in (
+        SELECT idConsulta FROM u438573835_censo.ffsj_consultas_preguntas where id = ${idPregunta} and idAsociado = ${idAsociado}
+      );
+      `
+    ).then(res => {
+      if (res === 0) {
+        reject(false);
+        return;
+      }
+      resolve(true);
+    }).catch(() => reject(false));
+  });
+}
