@@ -13,8 +13,8 @@ module.exports.consultasIdConsultaAutorizadosGET = function consultasIdConsultaA
     });
 };
 
-module.exports.consultasIdConsultaAutorizadosIdUsuarioDELETE = function consultasIdConsultaAutorizadosIdUsuarioDELETE (req, res, next, idConsulta, idUsuario) {
-  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdUsuarioDELETE(idConsulta, idUsuario)
+module.exports.consultasIdConsultaAutorizadosIdAsociadoDELETE = function consultasIdConsultaAutorizadosIdAsociadoDELETE (req, res, next, idConsulta, idAsociado) {
+  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdAsociadoDELETE(idConsulta, idAsociado)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -23,8 +23,8 @@ module.exports.consultasIdConsultaAutorizadosIdUsuarioDELETE = function consulta
     });
 };
 
-module.exports.consultasIdConsultaAutorizadosIdUsuarioGET = function consultasIdConsultaAutorizadosIdUsuarioGET (req, res, next, idConsulta, idUsuario) {
-  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdUsuarioGET(idConsulta, idUsuario)
+module.exports.consultasIdConsultaAutorizadosIdAsociadoGET = function consultasIdConsultaAutorizadosIdAsociadoGET (req, res, next, idConsulta, idAsociado) {
+  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdAsociadoGET(idConsulta, idAsociado)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -33,8 +33,8 @@ module.exports.consultasIdConsultaAutorizadosIdUsuarioGET = function consultasId
     });
 };
 
-module.exports.consultasIdConsultaAutorizadosIdUsuarioPUT = function consultasIdConsultaAutorizadosIdUsuarioPUT (req, res, next, body, idConsulta, idUsuario) {
-  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdUsuarioPUT(body, idConsulta, idUsuario)
+module.exports.consultasIdConsultaAutorizadosIdAsociadoPUT = function consultasIdConsultaAutorizadosIdAsociadoPUT (req, res, next, body, idConsulta, idAsociado) {
+  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdAsociadoPUT(body, idConsulta, idAsociado)
     .then(function (response) {
       utils.writeJson(res, response);
     })

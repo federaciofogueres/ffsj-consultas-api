@@ -166,3 +166,58 @@ exports.consultasPOST = function(body) {
     }
   });
 }
+
+/**
+ * Obtener resultados de una consulta por ID de consulta
+ *
+ * id Integer 
+ * returns ResultadoConsulta
+ **/
+exports.consultasIdResultadosGET = function(id) {
+  return new Promise(async function(resolve, reject) {
+    try {
+      const consulta = await extraService.get(id, "ffsj_consultas_consultas");
+      let bodyResponse = {...consulta[0]};
+      bodyResponse.resultadoPreguntas = [];
+      delete bodyResponse.necesitaAutorizacion;
+      console.log('CONSULTA -> ', bodyResponse);
+      const preguntas = await extraService.get(null, null, 'SELECT * FROM u438573835_censo.ffsj_consultas_preguntas where idConsulta = ' + id +';');
+      
+      for (let pregunta of preguntas) {
+        let preguntaResponse = {...pregunta};
+        delete preguntaResponse.active;
+        preguntaResponse.resultadoOpciones = [];
+        let respuestas = await getRespuestas(pregunta);
+        
+        for (let respuesta of respuestas) {
+          let respuestaResponse = {...respuesta};
+          delete respuestaResponse.idPregunta;
+          let votos = await getVotosFromRespuesta(respuesta);
+          respuestaResponse.votos = votos[0].votos;
+          console.log('RESPUESTA RESPONSE -> ', respuestaResponse);
+          preguntaResponse.resultadoOpciones.push(respuestaResponse);
+        }
+
+        bodyResponse.resultadoPreguntas.push(preguntaResponse);
+        console.log('VOTOS', bodyResponse.resultadoPreguntas[0].resultadoOpciones);
+        console.log('BODY RESPONSE', bodyResponse);
+      }
+
+      resolve(extraService.transformResponse(bodyResponse, "resultadoConsulta", true));
+    }catch(error) {
+      console.error(error);
+    }
+  });
+}
+
+
+var getRespuestas = async function(pregunta) {
+  const respuestas = await extraService.get(null, null, 'SELECT * FROM u438573835_censo.ffsj_consultas_opciones_respuestas where idPregunta = ' + pregunta.id +';');
+  return respuestas;
+
+}
+
+var getVotosFromRespuesta = async function(respuesta) {
+  const votos = await extraService.get(null, null, 'SELECT count(*) as votos FROM u438573835_censo.ffsj_consultas_respuestas_usuarios where idOpcionRespuesta = ' + respuesta.id +';');
+  return votos;
+}

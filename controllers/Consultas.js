@@ -43,6 +43,16 @@ module.exports.consultasIdPUT = function consultasIdPUT (req, res, next, body, i
     });
 };
 
+module.exports.consultasIdResultadosGET = function consultasIdResultadosGET (req, res, next, id) {
+  Consultas.consultasIdResultadosGET(id)
+    .then(function (response) {
+      utils.writeJson(res, response);
+    })
+    .catch(function (response) {
+      utils.writeJson(res, response);
+    });
+};
+
 module.exports.consultasPOST = function consultasPOST (req, res, next, body) {
   Consultas.consultasPOST(body)
     .then(function (response) {

@@ -55,6 +55,36 @@ paths:
       security:
       - bearerAuth: []
       x-swagger-router-controller: Consultas
+  /consultas/{id}/resultados:
+    get:
+      tags:
+      - consultas
+      summary: Obtener resultados de una consulta por ID de consulta
+      operationId: consultasIdResultadosGET
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Consulta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResultadoConsulta'
+        "404":
+          description: Consulta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseStatus'
+      security:
+      - bearerAuth: []
+      x-swagger-router-controller: Consultas
   /consultas/{id}:
     get:
       tags:
@@ -207,7 +237,7 @@ paths:
       tags:
       - autorizacionesConsultas
       summary: Obtener una autorización de usuario por ID
-      operationId: consultasIdConsultaAutorizadosIdUsuarioGET
+      operationId: consultasIdConsultaAutorizadosIdAsociadoGET
       parameters:
       - name: idConsulta
         in: path
@@ -243,7 +273,7 @@ paths:
       tags:
       - autorizacionesConsultas
       summary: Actualizar una autorización de usuario en una consulta
-      operationId: consultasIdConsultaAutorizadosIdUsuarioPUT
+      operationId: consultasIdConsultaAutorizadosIdAsociadoPUT
       parameters:
       - name: idConsulta
         in: path
@@ -285,7 +315,7 @@ paths:
       tags:
       - autorizacionesConsultas
       summary: Eliminar una autorización de usuario por ID
-      operationId: consultasIdConsultaAutorizadosIdUsuarioDELETE
+      operationId: consultasIdConsultaAutorizadosIdAsociadoDELETE
       parameters:
       - name: idConsulta
         in: path
@@ -699,8 +729,8 @@ components:
   schemas:
     Autorizacion:
       required:
-      - idConsulta
       - idAsociado
+      - idConsulta
       type: object
       properties:
         idConsulta:
@@ -824,6 +854,107 @@ components:
           active: true
           id: 1
           idConsulta: 5
+        id: 0
+        votosTotales: 6
+    ResultadoPregunta:
+      required:
+      - active
+      - enunciado
+      - id
+      - idConsulta
+      - opcionesRespuestas
+      - titulo
+      type: object
+      properties:
+        id:
+          type: integer
+        titulo:
+          type: string
+        enunciado:
+          type: string
+        idConsulta:
+          type: integer
+        resultadoOpciones:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultadoOpcion'
+      example:
+        enunciado: enunciado
+        resultadoOpciones:
+        - id: 5
+          respuesta: respuesta
+          votos: 2
+        - id: 5
+          respuesta: respuesta
+          votos: 2
+        titulo: titulo
+        id: 1
+        idConsulta: 5
+    ResultadoOpcion:
+      required:
+      - id
+      - respuesta
+      - votos
+      type: object
+      properties:
+        id:
+          type: integer
+        respuesta:
+          type: string
+        votos:
+          type: integer
+      example:
+        id: 5
+        respuesta: respuesta
+        votos: 2
+    ResultadoConsulta:
+      required:
+      - fecha
+      - id
+      - necesitaAutorizacion
+      - preguntas
+      - titulo
+      - votosTotales
+      type: object
+      properties:
+        id:
+          type: integer
+        fecha:
+          type: string
+        titulo:
+          type: string
+        votosTotales:
+          type: integer
+        resultadoPreguntas:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResultadoPregunta'
+      example:
+        fecha: fecha
+        resultadoPreguntas:
+        - enunciado: enunciado
+          resultadoOpciones:
+          - id: 5
+            respuesta: respuesta
+            votos: 2
+          - id: 5
+            respuesta: respuesta
+            votos: 2
+          titulo: titulo
+          id: 1
+          idConsulta: 5
+        - enunciado: enunciado
+          resultadoOpciones:
+          - id: 5
+            respuesta: respuesta
+            votos: 2
+          - id: 5
+            respuesta: respuesta
+            votos: 2
+          titulo: titulo
+          id: 1
+          idConsulta: 5
+        titulo: titulo
         id: 0
         votosTotales: 6
     RespuestaUsuario:
