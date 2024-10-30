@@ -45,6 +45,20 @@ exports.consultasIdConsultaAutorizadosIdAsistenciaDELETE  = function(idConsulta,
   });
 }
 
+exports.consultasIdConsultaAutorizadosIdAsociadoGET = function(idConsulta, idAsociado) {
+  return new Promise(function(resolve, reject) {
+    extraService.special(
+      `
+      SELECT * FROM u438573835_censo.ffsj_consultas_autorizados where idConsulta = ${idConsulta} and idAsociado = ${idAsociado};
+      `
+    ).then(res => {
+      resolve(extraService.transformResponse(res, "autorizaciones", true));
+    }).catch(res => {
+      reject(utils.respondWithCode(500, res));
+    });
+  });
+}
+
 
 /**
  * Obtener una autorización de usuario por ID
