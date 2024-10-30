@@ -80,9 +80,9 @@ exports.respuestasUsuariosIdPUT = function() {
 exports.respuestasUsuariosPOST = async function(body) { // Paso 2: Hacer la función async
   return new Promise(async function(resolve, reject) { // Añadir async aquí también es opcional
     try {
-      await checkAutorizado(body.idPregunta, body.idAsociado); // Paso 3: Usar await
+      await checkAutorizado(body.idPregunta, body.idAsistencia); // Paso 3: Usar await
       try {
-        await checkRespuestaExists(body.idPregunta, body.idAsociado); // Paso 2: Usar await
+        await checkRespuestaExists(body.idPregunta, body.idAsistencia); // Paso 2: Usar await
         extraService.set(body, 'ffsj_consultas_respuestas_usuarios', false).then(res => {
           resolve(extraService.transformResponse(res, 'respuestasUsuarios', true));
         }).catch(err => {
@@ -98,9 +98,9 @@ exports.respuestasUsuariosPOST = async function(body) { // Paso 2: Hacer la func
   });
 }
 
-var checkRespuestaExists = function (idPregunta, idAsociado) {
+var checkRespuestaExists = function (idPregunta, idAsistencia) {
   return new Promise((resolve, reject) => { // Paso 1: Retornar una promesa
-    extraService.get(null, null, `SELECT * FROM u438573835_censo.ffsj_consultas_respuestas_usuarios where idPregunta = ${idPregunta} and idAsociado = ${idAsociado};`).then(res => {
+    extraService.get(null, null, `SELECT * FROM u438573835_censo.ffsj_consultas_respuestas_usuarios where idPregunta = ${idPregunta} and idAsistencia = ${idAsistencia};`).then(res => {
       if (res && res.length > 0) {
         respuestasUsuariosIdDELETE(res[0].id).then(resolve).catch(reject);
       } else {
@@ -111,15 +111,16 @@ var checkRespuestaExists = function (idPregunta, idAsociado) {
 }
 
 
-var checkAutorizado = function (idPregunta, idAsociado) {
+var checkAutorizado = function (idPregunta, idAsistencia) {
   return new Promise((resolve, reject) => { // Paso 1: Retornar una promesa
     extraService.special( 
       `
       SELECT * FROM u438573835_censo.ffsj_consultas_autorizados where idConsulta in (
-        SELECT idConsulta FROM u438573835_censo.ffsj_consultas_preguntas where id = ${idPregunta} and idAsociado = ${idAsociado}
-      );
+        SELECT idConsulta FROM u438573835_censo.ffsj_consultas_preguntas where id = ${idPregunta}
+      ) and idAsistencia = ${idAsistencia};
       `
     ).then(res => {
+      console.log(res);
       if (res === 0) {
         reject(false);
         return;

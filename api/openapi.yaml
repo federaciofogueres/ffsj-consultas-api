@@ -232,12 +232,12 @@ paths:
       security:
       - bearerAuth: []
       x-swagger-router-controller: AutorizacionesConsultas
-  /consultas/{idConsulta}/autorizados/{idAsociado}:
+  /consultas/{idConsulta}/autorizados/{idAsistencia}:
     get:
       tags:
       - autorizacionesConsultas
       summary: Obtener una autorización de usuario por ID
-      operationId: consultasIdConsultaAutorizadosIdAsociadoGET
+      operationId: consultasIdConsultaAutorizadosIdAsistenciaGET
       parameters:
       - name: idConsulta
         in: path
@@ -246,7 +246,7 @@ paths:
         explode: false
         schema:
           type: integer
-      - name: idAsociado
+      - name: idAsistencia
         in: path
         required: true
         style: simple
@@ -273,7 +273,7 @@ paths:
       tags:
       - autorizacionesConsultas
       summary: Actualizar una autorización de usuario en una consulta
-      operationId: consultasIdConsultaAutorizadosIdAsociadoPUT
+      operationId: consultasIdConsultaAutorizadosIdAsistenciaPUT
       parameters:
       - name: idConsulta
         in: path
@@ -282,7 +282,7 @@ paths:
         explode: false
         schema:
           type: integer
-      - name: idAsociado
+      - name: idAsistencia
         in: path
         required: true
         style: simple
@@ -315,7 +315,7 @@ paths:
       tags:
       - autorizacionesConsultas
       summary: Eliminar una autorización de usuario por ID
-      operationId: consultasIdConsultaAutorizadosIdAsociadoDELETE
+      operationId: consultasIdConsultaAutorizadosIdAsistenciaDELETE
       parameters:
       - name: idConsulta
         in: path
@@ -324,7 +324,7 @@ paths:
         explode: false
         schema:
           type: integer
-      - name: idAsociado
+      - name: idAsistencia
         in: path
         required: true
         style: simple
@@ -729,16 +729,16 @@ components:
   schemas:
     Autorizacion:
       required:
-      - idAsociado
+      - idAsistencia
       - idConsulta
       type: object
       properties:
         idConsulta:
           type: integer
-        idAsociado:
+        idAsistencia:
           type: integer
       example:
-        idAsociado: 6
+        idAsistencia: 6
         idConsulta: 0
     Pregunta:
       required:
@@ -960,21 +960,21 @@ components:
     RespuestaUsuario:
       required:
       - id
-      - idAsociado
+      - idAsistencia
       - idOpcionRespuesta
       - idPregunta
       type: object
       properties:
         id:
           type: integer
-        idAsociado:
+        idAsistencia:
           type: integer
         idPregunta:
           type: integer
         idOpcionRespuesta:
           type: integer
       example:
-        idAsociado: 6
+        idAsistencia: 6
         id: 0
         idOpcionRespuesta: 5
         idPregunta: 1
@@ -1009,9 +1009,9 @@ components:
           $ref: '#/components/schemas/Status'
       example:
         autorizaciones:
-        - idAsociado: 6
+        - idAsistencia: 6
           idConsulta: 0
-        - idAsociado: 6
+        - idAsistencia: 6
           idConsulta: 0
         status:
           message: La llamada ha ido bien
@@ -1028,7 +1028,7 @@ components:
           $ref: '#/components/schemas/Status'
       example:
         autorizacion:
-          idAsociado: 6
+          idAsistencia: 6
           idConsulta: 0
         status:
           message: La llamada ha ido bien
@@ -1294,7 +1294,7 @@ components:
           $ref: '#/components/schemas/Status'
       example:
         respuestaUsuario:
-          idAsociado: 6
+          idAsistencia: 6
           id: 0
           idOpcionRespuesta: 5
           idPregunta: 1

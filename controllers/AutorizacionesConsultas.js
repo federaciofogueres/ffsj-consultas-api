@@ -13,8 +13,8 @@ module.exports.consultasIdConsultaAutorizadosGET = function consultasIdConsultaA
     });
 };
 
-module.exports.consultasIdConsultaAutorizadosIdAsociadoDELETE = function consultasIdConsultaAutorizadosIdAsociadoDELETE (req, res, next, idConsulta, idAsociado) {
-  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdAsociadoDELETE(idConsulta, idAsociado)
+module.exports.consultasIdConsultaAutorizadosIdAsistenciaDELETE = function consultasIdConsultaAutorizadosIdAsistenciaDELETE (req, res, next, idConsulta, idAsistencia) {
+  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdAsistenciaDELETE(idConsulta, idAsistencia)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -23,8 +23,8 @@ module.exports.consultasIdConsultaAutorizadosIdAsociadoDELETE = function consult
     });
 };
 
-module.exports.consultasIdConsultaAutorizadosIdAsociadoGET = function consultasIdConsultaAutorizadosIdAsociadoGET (req, res, next, idConsulta, idAsociado) {
-  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdAsociadoGET(idConsulta, idAsociado)
+module.exports.consultasIdConsultaAutorizadosIdAsistenciaGET = function consultasIdConsultaAutorizadosIdAsistenciaGET (req, res, next, idConsulta, idAsistencia) {
+  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdAsistenciaGET(idConsulta, idAsistencia)
     .then(function (response) {
       utils.writeJson(res, response);
     })
@@ -33,8 +33,8 @@ module.exports.consultasIdConsultaAutorizadosIdAsociadoGET = function consultasI
     });
 };
 
-module.exports.consultasIdConsultaAutorizadosIdAsociadoPUT = function consultasIdConsultaAutorizadosIdAsociadoPUT (req, res, next, body, idConsulta, idAsociado) {
-  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdAsociadoPUT(body, idConsulta, idAsociado)
+module.exports.consultasIdConsultaAutorizadosIdAsistenciaPUT = function consultasIdConsultaAutorizadosIdAsistenciaPUT (req, res, next, body, idConsulta, idAsistencia) {
+  AutorizacionesConsultas.consultasIdConsultaAutorizadosIdAsistenciaPUT(body, idConsulta, idAsistencia)
     .then(function (response) {
       utils.writeJson(res, response);
     })
