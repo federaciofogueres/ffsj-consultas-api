@@ -4,7 +4,6 @@
   "description": "API para gestionar consultas de usuarios.",
   "main": "index.js",
   "scripts": {
-    "prestart": "npm install",
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
