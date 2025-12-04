@@ -9,8 +9,8 @@ var utils = require('../utils/writer.js');
  * idConsulta Integer 
  * returns ResponseAutorizaciones
  **/
-exports.consultasIdConsultaAutorizadosGET = function(idConsulta) {
-  return new Promise(function(resolve, reject) {
+exports.consultasIdConsultaAutorizadosGET = function (idConsulta) {
+  return new Promise(function (resolve, reject) {
     extraService.special(
       `
       SELECT * FROM u438573835_censo.ffsj_consultas_autorizados where idConsulta = ${idConsulta};
@@ -31,8 +31,8 @@ exports.consultasIdConsultaAutorizadosGET = function(idConsulta) {
  * idUsuario Integer 
  * returns ResponseStatus
  **/
-exports.consultasIdConsultaAutorizadosIdAsistenciaDELETE  = function(idConsulta,idAsistencia) {
-  return new Promise(function(resolve, reject) {
+exports.consultasIdConsultaAutorizadosIdAsistenciaDELETE = function (idConsulta, idAsistencia) {
+  return new Promise(function (resolve, reject) {
     extraService.special(
       `
       DELETE FROM u438573835_censo.ffsj_consultas_autorizados WHERE (idAsistencia = ${idAsistencia}) and (idConsulta = ${idConsulta});
@@ -45,11 +45,11 @@ exports.consultasIdConsultaAutorizadosIdAsistenciaDELETE  = function(idConsulta,
   });
 }
 
-exports.consultasIdConsultaAutorizadosIdAsociadoGET = function(idConsulta, idAsociado) {
-  return new Promise(function(resolve, reject) {
+exports.consultasIdConsultaAutorizadosIdAsociadoGET = function (idConsulta, idAsistencia) {
+  return new Promise(function (resolve, reject) {
     extraService.special(
       `
-      SELECT * FROM u438573835_censo.ffsj_consultas_autorizados where idConsulta = ${idConsulta} and idAsociado = ${idAsociado};
+      SELECT * FROM u438573835_censo.ffsj_consultas_autorizados where idConsulta = ${idConsulta} and idAsistencia = ${idAsistencia};
       `
     ).then(res => {
       resolve(extraService.transformResponse(res, "autorizaciones", true));
@@ -67,8 +67,8 @@ exports.consultasIdConsultaAutorizadosIdAsociadoGET = function(idConsulta, idAso
  * idUsuario Integer 
  * returns ResponseAutorizacion
  **/
-exports.consultasIdConsultaAutorizadosIdAsistenciaGET = function(idConsulta,idAsistencia) {
-  return new Promise(function(resolve, reject) {
+exports.consultasIdConsultaAutorizadosIdAsistenciaGET = function (idConsulta, idAsistencia) {
+  return new Promise(function (resolve, reject) {
     extraService.special(
       `
       SELECT * FROM u438573835_censo.ffsj_consultas_autorizados where idConsulta = ${idConsulta} and idAsistencia = ${idAsistencia};
@@ -90,8 +90,8 @@ exports.consultasIdConsultaAutorizadosIdAsistenciaGET = function(idConsulta,idAs
  * idUsuario Integer 
  * returns ResponseStatus
  **/
-exports.consultasIdConsultaAutorizadosIdAsistenciaPUT = function(body,idConsulta,idAsistencia) {
-  return new Promise(function(resolve, reject) {
+exports.consultasIdConsultaAutorizadosIdAsistenciaPUT = function (body, idConsulta, idAsistencia) {
+  return new Promise(function (resolve, reject) {
     extraService.special(
       `
       UPDATE u438573835_censo.ffsj_consultas_autorizados SET idAsistencia = ${body.idAsistencia}, idConsulta = ${body.idConsulta} WHERE (idAsistencia = ${idAsistencia}) and (idConsulta = ${idConsulta});
@@ -112,11 +112,11 @@ exports.consultasIdConsultaAutorizadosIdAsistenciaPUT = function(body,idConsulta
  * idConsulta Integer 
  * returns ResponseStatus
  **/
-exports.consultasIdConsultaAutorizadosPOST = function(body,idConsulta) {
+exports.consultasIdConsultaAutorizadosPOST = function (body, idConsulta) {
   console.log(body, idConsulta);
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     try {
-      
+
       extraService.set(body, 'ffsj_consultas_autorizados', false).then(res => {
         resolve(extraService.transformResponse(res, 'autorizaciones', true));
       }).catch(err => {
