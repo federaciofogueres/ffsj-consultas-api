@@ -1,43 +1,73 @@
 'use strict';
 
 const path = require('path');
-const express = require('express');
+const http = require('http');
 const cors = require('cors');
-const fs = require('fs');
-const yaml = require('js-yaml');
 
 const oas3Tools = require('oas3-tools');
-
-const app = express();
 const serverPort = process.env.PORT || 8080;
 
-// Middlewares estándar
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Cargar el archivo OpenAPI
-const spec = yaml.load(
-    fs.readFileSync(path.join(__dirname, 'api/openapi.yaml'), 'utf8')
-);
-
-// Configuración de rutas y controladores
+// swaggerRouter configuration
 const options = {
     routing: {
-        controllers: path.join(__dirname, './controllers'),
+        controllers: path.join(__dirname, './controllers')
     },
 };
 
-// Inicializar el middleware de OAS3
-oas3Tools.initializeMiddleware(spec, (middleware) => {
-    app.use(middleware.swaggerMetadata());
-    app.use(middleware.swaggerValidator());
-    app.use(middleware.swaggerRouter(options));
-    app.use(middleware.swaggerUi());
+const expressAppConfig = oas3Tools.expressAppConfig(
+    path.join(__dirname, 'api/openapi.yaml'),
+    options
+);
+const app = expressAppConfig.getApp();
 
-    // Arranque del servidor
-    app.listen(serverPort, () => {
-        console.log(`Server listening on port ${serverPort}`);
-        console.log(`Swagger UI: http://localhost:${serverPort}/docs`);
-    });
+/**
+ * Allowed origins:
+ * - http://localhost:4200 (dev)
+ * - ffsj-asambleas web (hogueras.es domain)
+ */
+const allowedLocal = 'http://localhost:4200';
+const allowedDomain = 'hogueras.es';
+
+// función que verifica el origin
+function isAllowedOrigin(origin) {
+    if (!origin) return true; // llamadas internas / curl
+
+    if (origin === allowedLocal) return true;
+
+    try {
+        const url = new URL(origin);
+        const hostname = url.hostname.toLowerCase();
+
+        if (hostname === allowedDomain) return true;
+        if (hostname.endsWith('.' + allowedDomain)) return true;
+
+        return false;
+    } catch {
+        return false;
+    }
+}
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (isAllowedOrigin(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('CORS policy: Origin not allowed: ' + origin));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    optionsSuccessStatus: 204
+};
+
+// aplicar CORS antes de las rutas
+app.use(cors(corsOptions));
+
+// manejar todos los preflight OPTIONS
+app.options('*', cors(corsOptions));
+
+// Start server
+http.createServer(app).listen(serverPort, function () {
+    console.log(`Your server is listening on port ${serverPort} (http://localhost:${serverPort})`);
+    console.log(`Swagger-ui is available on http://localhost:${serverPort}/docs`);
 });
