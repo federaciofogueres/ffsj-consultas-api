@@ -1,24 +1,43 @@
 'use strict';
 
-var path = require('path');
-var http = require('http');
+const path = require('path');
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs');
+const yaml = require('js-yaml');
 
-var oas3Tools = require('oas3-tools');
-var serverPort = process.env.PORT || 8080;
+const oas3Tools = require('oas3-tools');
 
-// swaggerRouter configuration
-var options = {
+const app = express();
+const serverPort = process.env.PORT || 8080;
+
+// Middlewares estándar
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Cargar el archivo OpenAPI
+const spec = yaml.load(
+    fs.readFileSync(path.join(__dirname, 'api/openapi.yaml'), 'utf8')
+);
+
+// Configuración de rutas y controladores
+const options = {
     routing: {
-        controllers: path.join(__dirname, './controllers')
+        controllers: path.join(__dirname, './controllers'),
     },
 };
 
-var expressAppConfig = oas3Tools.expressAppConfig(path.join(__dirname, 'api/openapi.yaml'), options);
-var app = expressAppConfig.getApp();
+// Inicializar el middleware de OAS3
+oas3Tools.initializeMiddleware(spec, (middleware) => {
+    app.use(middleware.swaggerMetadata());
+    app.use(middleware.swaggerValidator());
+    app.use(middleware.swaggerRouter(options));
+    app.use(middleware.swaggerUi());
 
-// Initialize the Swagger middleware
-http.createServer(app).listen(serverPort, function () {
-    console.log('Your server is listening on port %d (http://localhost:%d)', serverPort, serverPort);
-    console.log('Swagger-ui is available on http://localhost:%d/docs', serverPort);
+    // Arranque del servidor
+    app.listen(serverPort, () => {
+        console.log(`Server listening on port ${serverPort}`);
+        console.log(`Swagger UI: http://localhost:${serverPort}/docs`);
+    });
 });
-
